@@ -3,9 +3,6 @@ box: node
 dev:
   steps:
   - npm-install
-  - script: &typings
-      name: typings install
-      code: npm run typings
   - internal/watch:
       code: npm test
       reload: true
@@ -13,7 +10,6 @@ dev:
 build:
   steps:
   - npm-install
-  - script: *typings
   - npm-test
 
 docs:

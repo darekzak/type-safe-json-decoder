@@ -3,10 +3,8 @@
   "version": "0.2.0",
   "description": "Elm-inspired JSON decoder for typescript",
   "main": "src/index.js",
-  "typings": "src/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc && rm -r dist/spec && cp README.md LICENSE package.json dist",
-    "typings": "typings install",
     "test": "tsc && node util/test.js",
     "docs": "typedoc --out docs --excludeNotExported --excludePrivate src"
   },
@@ -28,9 +26,9 @@
   },
   "homepage": "https://github.com/ooesili/type-safe-json-decoder#readme",
   "devDependencies": {
+    "@types/jasmine": "^2.5.53",
     "jasmine": "^2.5.2",
     "typedoc": "^0.5.0",
-    "typescript": "^2.0.3",
-    "typings": "^1.4.0"
+    "typescript": "^2.0.3"
   }
 }
