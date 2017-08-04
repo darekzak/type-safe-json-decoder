@@ -116,23 +116,23 @@ describe('array', () => {
 describe('object', () => {
   describe('when given valid JSON', () => {
     it('can decode a simple object', () => {
-      const decoder = module.object(
-        ['x', module.number()],
-        (x) => ({x})
-      )
+      const decoder = module.object({
+        x: module.field('x', module.number())
+      })
       expect(decoder.decodeJSON('{"x": 5}')).toEqual({x: 5})
     })
 
     it('can decode a nested object', () => {
-      const decoder = module.object(
-        ['payload', module.object(
-          ['x', module.number()],
-          ['y', module.number()],
-          (x, y) => ({x, y})
-        )],
-        ['error', module.equal(false)],
-        (payload, error) => ({payload, error})
-      )
+      const decoder = module.object({
+        payload: module.field(
+          'payload',
+          module.object({
+            x: module.field('x', module.number()),
+            y: module.field('y', module.number())
+          })
+        ),
+        error: module.field('error', module.equal(false))
+      })
       const json = '{"payload": {"x": 5, "y": 2}, "error": false}'
       expect(decoder.decodeJSON(json)).toEqual({
         payload: {x: 5, y: 2},
@@ -140,13 +140,18 @@ describe('object', () => {
       })
     })
 
-    it('can decode into something other than an object', () => {
-      const decoder = module.object(
-        ['x', module.number()],
-        ['y', module.number()],
-        (x, y) => [x, y]
-      )
-      expect(decoder.decodeJSON('{"x":3,"y":4}')).toEqual([3, 4])
+    it('can reach into nested objects', () => {
+      const decoder = module.object({
+        token: module.field('token', module.string()),
+        name: module.at(['person', 'name'], module.string()),
+        age: module.at(['person', 'age'], module.number())
+      })
+      const json = '{"token":"abcdef","person":{"name":"John","age":21}}'
+      expect(decoder.decodeJSON(json)).toEqual({
+        token: 'abcdef',
+        name: 'John',
+        age: 21
+      })
     })
 
     it('can decode an object with optional keys', () => {
@@ -154,10 +159,9 @@ describe('object', () => {
         name?: string
       }
 
-      const decoder: module.Decoder<User> = module.object(
-        ['name', module.oneOf(module.string(), module.succeed(undefined))],
-        (name) => ({name})
-      )
+      const decoder: module.Decoder<User> = module.object({
+        name: module.oneOf(module.string(), module.succeed(undefined)),
+      })
 
       expect(decoder.decodeJSON(`{}`)).toEqual({name: undefined})
     })
@@ -165,57 +169,46 @@ describe('object', () => {
 
   describe('when given incorrect JSON', () => {
     it('fails when not given an object', () => {
-      const decoder = module.object(
-        ['x', module.number()],
-        (x: number) => ({x})
-      )
+      const decoder = module.object({
+        x: module.field('x', module.number())
+      })
       expect(() => decoder.decodeJSON('true')).toThrowError(
         `error at root: expected object, got boolean`
       )
     })
 
     it('reports a missing key', () => {
-      const decoder = module.object(
-        ['x', module.number()],
-        (x: number) => ({x})
-      )
+      const decoder = module.object({
+        x: module.field('x', module.number())
+      })
       expect(() => decoder.decodeJSON('{}')).toThrowError(
-        `error at root: expected object with keys: x`
-      )
-    })
-
-    it('reports multiple missing keys in alphabetical order', () => {
-      const decoder = module.object(
-        ['x', module.number()],
-        ['y', module.number()],
-        ['?', module.string()],
-        (x: number, y: number, huh: string) => ({x, y, huh})
-      )
-      expect(() => decoder.decodeJSON('{"x": 5}')).toThrowError(
-        `error at root: expected object with keys: "?", y`
+        `error at root: expected object with key x, got object`
       )
     })
 
     it('reports invalid values', () => {
-      const decoder = module.object(
-        ['name', module.string()],
-        (name: string) => {name}
-      )
+      const decoder = module.object({
+        name: module.field('name', module.string())
+      })
       expect(() => decoder.decodeJSON('{"name": 5}')).toThrowError(
         `error at .name: expected string, got number`
       )
     })
 
     it('properly displays nested errors', () => {
-      const id: <A>(x: A) => A = (x: any) => x
-      const decoder = module.object(
-        ['hello', module.object(
-          ['hey', module.object(
-            ['Howdy!', module.string()
-            ], id
-          )], id
-        )], id
-      )
+      const decoder = module.object({
+        hello: module.field(
+          'hello',
+          module.object({
+            hey: module.field(
+              'hey',
+              module.object({
+                howdy: module.field('Howdy!', module.string())
+              })
+            )
+          })
+        )
+      })
       expect(() => decoder.decodeJSON(
         '{"hello":{"hey":{"Howdy!":{}}}}'
       )).toThrowError(
@@ -282,6 +275,22 @@ describe('tuple', () => {
         'error at [1]: expected string, got number'
       )
     })
+  })
+})
+
+describe('field', () => {
+  const decoder = module.field(
+    'value',
+    module.number()
+  )
+  it('decodes an existing field', () => {
+    expect(decoder.decodeJSON('{"value":7}')).toBe(7)
+  })
+
+  it('fails for a non-existing field', () => {
+    expect(() => decoder.decodeJSON('{"name":"John"}')).toThrowError(
+      'error at root: expected object with key value, got object'
+    )
   })
 })
 
@@ -538,13 +547,10 @@ describe('lazy', () => {
       msg: string
       replies: Comment[]
     }
-    const decoder: module.Decoder<Comment> = module.object(
-      ['msg', module.string()],
-      ['replies', module.array(
-        module.lazy(() => decoder)
-      )],
-      (msg, replies) => ({msg, replies})
-    )
+    const decoder: module.Decoder<Comment> = module.object({
+      msg: module.field('msg', module.string()),
+      replies: module.field('replies', module.array(module.lazy(() => decoder)))
+    })
 
     it('can decode the data structure', () => {
       const tree = `{"msg":"hey","replies":[{"msg":"hi","replies":[]}]}`
@@ -610,18 +616,12 @@ describe('dict', () => {
 })
 
 describe('Decoder.decodeAny', () => {
-  const decoder = module.object(
-    ['id', module.number()],
-    ['name', module.string()],
-    (id, name) => ({id, name})
-  )
+  const decoder = module.object({
+    id: module.field('id', module.number()),
+    name: module.field('name', module.string())
+  })
 
   it('can decode an normal object', () => {
-    const decoder = module.object(
-      ['id', module.number()],
-      ['name', module.string()],
-      (id, name) => ({id, name})
-    )
     const input = {
       id: 7,
       name: 'Bob'

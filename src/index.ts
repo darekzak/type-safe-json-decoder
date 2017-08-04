@@ -218,33 +218,9 @@ export function array <T>(element: Decoder<T>): Decoder<T[]> {
   })
 }
 
-/**
- * Decode an object with the given fields and types.
- * @param ad One or more EntryDecoders describing the object's fields.
- * @param cons Constructor that uses the results from the given EntryDecoders.
- * @returns A Decoder that will decode an object of the given type.
- */
-export function object <T, A>(ad: EntryDecoder<A>, cons: (a: A) => T): Decoder<T>
-export function object <T, A, B>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cons: (a: A, b: B) => T): Decoder<T>
-export function object <T, A, B, C>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, cons: (a: A, b: B, c: C) => T): Decoder<T>
-export function object <T, A, B, C, D>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, cons: (a: A, b: B, c: C, d: D) => T): Decoder<T>
-export function object <T, A, B, C, D, E>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, cons: (a: A, b: B, c: C, d: D, e: E) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, cons: (a: A, b: B, c: C, d: D, e: E, f: F) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H, I>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, id: EntryDecoder<I>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H, I, J>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, id: EntryDecoder<I>, jd: EntryDecoder<J>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H, I, J, K>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, id: EntryDecoder<I>, jd: EntryDecoder<J>, kd: EntryDecoder<K>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H, I, J, K, L>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, id: EntryDecoder<I>, jd: EntryDecoder<J>, kd: EntryDecoder<K>, ld: EntryDecoder<L>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H, I, J, K, L, M>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, id: EntryDecoder<I>, jd: EntryDecoder<J>, kd: EntryDecoder<K>, ld: EntryDecoder<L>, md: EntryDecoder<M>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M) => T): Decoder<T>
-export function object <T, A, B, C, D, E, F, G, H, I, J, K, L, M, N>(ad: EntryDecoder<A>, bd: EntryDecoder<B>, cd: EntryDecoder<C>, dd: EntryDecoder<D>, ed: EntryDecoder<E>, fd: EntryDecoder<F>, gd: EntryDecoder<G>, hd: EntryDecoder<H>, id: EntryDecoder<I>, jd: EntryDecoder<J>, kd: EntryDecoder<K>, ld: EntryDecoder<L>, md: EntryDecoder<M>, nd: EntryDecoder<N>, cons: (a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K, l: L, m: M, n: N) => T): Decoder<T>
-export function object <T>(...args: any[]): Decoder<T> {
-  const cons: (...args: any[]) => T = args[args.length - 1]
-  const decoders: EntryDecoder<any>[] = args.slice(0, args.length - 1)
-
+export function object <T>(decodersObject: {[P in keyof T]: Decoder<T[P]>}): Decoder<T> {
   return createDecoder((obj, at) => {
-    const missingKeys: string[] = []
-    const values: any[] = []
+    const decoded: any = {};
 
     if (typeof obj !== 'object') {
       throw decoderError({
@@ -254,35 +230,11 @@ export function object <T>(...args: any[]): Decoder<T> {
       })
     }
 
-    decoders.forEach(([key, decoder]) => {
-      let value
-
-      try {
-        value = decode(decoder, obj[key], pushLocation(at, key))
-      } catch (err) {
-        if (!(key in obj)) {
-          missingKeys.push(key)
-        } else {
-          throw err
-        }
-      }
-
-      values.push(value)
-    })
-
-    if (missingKeys.length > 0) {
-      const keys = missingKeys
-        .sort()
-        .map(escapeKey)
-        .join(', ')
-
-      throw decoderError({
-        at,
-        expected: `object with keys: ${keys}`,
-      })
+    for (const key in decodersObject) {
+      decoded[key] = decode(decodersObject[key], obj, at)
     }
 
-    return cons(...values)
+    return decoded as T
   })
 }
 
@@ -333,6 +285,25 @@ export function tuple (...decoders: Decoder<any>[]): Decoder<any> {
       return decode(decoder, obj[i], pushLocation(at, i))
     })
   ))
+}
+
+export function field <T>(key: string, decoder: Decoder<T>): Decoder<T> {
+  return createDecoder((obj, at) => {
+    const value = obj[key];
+    try {
+      return decode(decoder, value, pushLocation(at, key))
+    } catch(err) {
+      if (value === undefined) {
+        throw decoderError({
+          at,
+          expected: `object with key ${escapeKey(key)}`,
+          got: obj
+        })
+      } else {
+        throw err
+      }
+    }
+  })
 }
 
 /**

@@ -46,11 +46,10 @@ interface User {
 }
 
 const usersDecoder: Decoder<User[]> = at(['users'], array(
-  object(
-    ['id', number()],
-    ['name', string()],
-    (id, name) => ({id, name})
-  )
+  object({
+    id: field('id', number()),
+    name: field('name', string()),
+  })
 ))
 
 const users: User[] = usersDecoder.decodeJSON(usersJSON)
