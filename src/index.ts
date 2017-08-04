@@ -437,7 +437,7 @@ export function succeed <T>(value: T): Decoder<T> {
  * @returns The decoder returned by from the callback function.
 */
 
-export function andThen <A, B>(ad: Decoder<A>, cb: (a: A) => Decoder<B>): Decoder<B> {
+export function andThen <A, B>(cb: (a: A) => Decoder<B>, ad: Decoder<A>): Decoder<B> {
   return createDecoder((obj, at) => {
     return decode(cb(decode(ad, obj, at)), obj, at)
   })

@@ -447,8 +447,8 @@ describe('andThen', () => {
     return module.succeed("you're walkin', pal")
   }
   const decoder = module.andThen(
-    module.at(['type'], module.string()),
-    vehicle
+    vehicle,
+    module.at(['type'], module.string())
   )
 
   it('performs conditional decoding based on field', () => {
