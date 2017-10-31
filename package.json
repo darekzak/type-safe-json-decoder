@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/ooesili/type-safe-json-decoder#readme",
   "devDependencies": {
+    "@types/jasmine": "^2.6.0",
     "jasmine": "^2.5.2",
     "typedoc": "^0.5.0",
     "typescript": "^2.1.0",
