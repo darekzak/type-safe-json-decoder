@@ -66,6 +66,50 @@ describe('boolean', () => {
   })
 })
 
+describe('optional', () => {
+  const decoder = module.optional(module.number())
+
+  it('succeeds when given a number', () => {
+    expect(decoder.decodeJSON('4')).toBe(4)
+  })
+
+  it('succeeds when given a undefined', () => {
+    expect(decoder.decodeAny(undefined)).toBe(undefined)
+  })
+
+  it(`fails when given value !== undefined and its type doesn't match given
+    decoder - in this case -> module.number()`, () => {
+    expect(() => decoder.decodeAny('foo')).toThrowError(
+      'error at root: unexpected string'
+    )
+  })
+})
+
+describe('any', () => {
+  const decoder = module.any()
+
+  it('succeeds when given a number', () => {
+    expect(decoder.decodeJSON('4')).toBe(4)
+  })
+
+  it('succeeds when given a undefined', () => {
+    expect(decoder.decodeAny(undefined)).toBe(undefined)
+  })
+
+  it('works when given an array',() => {
+    expect(decoder.decodeJSON('[1, 2, 3]')).toEqual([1, 2, 3])
+  })
+
+  it('can decode a nested object', () => {
+    const json = '{"payload": {"x": 5, "y": 2}, "error": false}'
+    expect(decoder.decodeJSON(json)).toEqual({
+      payload: {x: 5, y: 2},
+      error: false
+    })
+  })
+
+})
+
 describe('equal', () => {
   it('works when given null', () => {
     const decoder = module.equal(null)

@@ -509,3 +509,13 @@ export function dict <T>(value: Decoder<T>): Decoder<Dict<T>> {
     return result
   })
 }
+
+export function optional <T>(decoder: Decoder<T>) {
+  return oneOf(decoder, equal(undefined))
+}
+
+export function any(): Decoder<any> {
+  return createDecoder((obj, _at) => {
+    return obj
+  })
+}
